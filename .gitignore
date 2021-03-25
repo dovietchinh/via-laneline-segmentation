@@ -125,5 +125,18 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+data
+.vscode
+__pycache__
+*.h5
+models
+
+*.jpg
+*.png
+
+checkpoint
+*.zip
+
 # Pyre type checker
 .pyre/
+*
