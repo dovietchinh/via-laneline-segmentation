@@ -9,5 +9,21 @@ date:
     26.3.2021
 """
 
+# Model Architecture
 
-EPOCH = ''
+NAME_MODEL = 'unet'                                 # must be in ['unet','double-unet']
+INPUT_SHAPE = 256                         # (256,256,3)
+
+# Training 
+
+EPOCHS = 100
+INITIAL_EPOCH = 0
+USE_MULTIPROCESSING = True
+OPTIMIZER = 'Adam'
+LOSS_NAME = 'DICE_LOSS'
+METRIC_NAME = 'iou'
+
+# Augmentaion 
+
+N = 3
+M = 10

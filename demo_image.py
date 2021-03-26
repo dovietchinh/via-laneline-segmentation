@@ -15,7 +15,6 @@ import argparse
 parser = argparse.ArgumentParser(description='Retinaface')
 parser.add_argument('-m', '--model', default='./models/pre_train_unet.h5',
                     type=str, help='Trained state_dict file path to open')
-parser.add_argument('--video_path', default=None, type=str, help='Whether use origin image size to evaluate')
 parser.add_argument('--img_path', default='./images/demo_image.jpg', type=str, help='Whether use origin image size to evaluate')
 args = parser.parse_args()
 
