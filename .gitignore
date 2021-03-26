@@ -128,12 +128,11 @@ dmypy.json
 data
 .vscode
 __pycache__
-*.h5
+
 models
 
-*.jpg
-*.png
-
+*.mp4
+1.jpg
 checkpoint
 *.zip
 
