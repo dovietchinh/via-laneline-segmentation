@@ -53,8 +53,6 @@ repo này huấn luyện mạng phân đoạn vạch kẻ đường, được t�
 ## Kết quả 
 
 ![demo1](images/demo1.png "demo")
-![demo2](images/demo2.png "demo")
-![demo3](images/demo3.png "demo")
 
 ## Cài đặt môi trường
 
