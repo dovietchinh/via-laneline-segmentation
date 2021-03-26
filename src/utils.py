@@ -10,6 +10,8 @@ date:
 """
 import tensorflow as tf
 
+from metrics import DiceLoss,iou
+
 def lr_function(epoch,current_lr):
     if epoch <=3:
         return 5e-4
@@ -17,3 +19,21 @@ def lr_function(epoch,current_lr):
         return 1e-3
     if epoch >=10:
         return current_lr *tf.math.exp(-0.1)
+
+def get_loss(loss_name):
+    try:
+        assert loss_name in ['DICE_LOSS'], "Invalid Keyword, loss_name must be in ['DICE_LOSS']"
+    except Exception as msg:
+        print(msg)
+    
+    if loss_name =='DICE_LOSS':
+        return DiceLoss()
+
+def get_metrics(metrics_name):
+    try:
+        assert metrics_name in ['iou'], "Invalid Keyword, loss_name must be in ['iou']"
+    except Exception as msg:
+        print(msg) 
+    
+    if metrics_name =='iou':
+        return iou

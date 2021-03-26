@@ -15,7 +15,10 @@ import os
 import numpy as np
 import random
 from augment import RandAugment
-
+import sys 
+path_ = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(path_+'/../')
+from configs import config
 class DataSequence(tf.keras.utils.Sequence):
     """DataSequence : 
 
@@ -35,7 +38,7 @@ class DataSequence(tf.keras.utils.Sequence):
         self.mask_folder = mask_folder
         self.phase = phase
         if phase == 'train':
-            self.augmenter = RandAugment()
+            self.augmenter = RandAugment(config.N,config.M)
         self.data_names = os.listdir(data_folder)
         self.mask_names = list(map(lambda x : x.replace('.jpg','.png'),self.data_names))
         self.all_data = list(zip(self.data_names,self.mask_names))
@@ -65,3 +68,5 @@ class DataSequence(tf.keras.utils.Sequence):
     
     def on_epoch_end(self,):
         random.shuffle(self.all_data)
+
+

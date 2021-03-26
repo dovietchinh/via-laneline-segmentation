@@ -183,6 +183,11 @@ def create_unet(input_shape):
 
 
 def build_model(inputs_shape, name_model = 'unet'):
+    try:
+        assert name_model in ['unet', 'double-unet'], "Invalid Keyword, name_model must be in ['unet','double-unet']"
+    except Exception as msg:
+        print(msg)
+        
     if name_model =='unet':
         return create_unet(inputs_shape)
     if name_model =='double_unet':

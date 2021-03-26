@@ -20,8 +20,19 @@ import pathlib
 import warnings
 from metrics import iou,DiceLoss
 warnings.filterwarnings('ignore')
-import sys
-sys.path.append(os.getcwd())
+import sys 
+import_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(import_path+'/../')
+from configs import config
+
+EPOCHS = config.EPOCHS
+INITIAL_EPOCH = config.INITIAL_EPOCH
+INPUT_SHAPE = config.INPUT_SHAPE
+NAME_MODEL = config.NAME_MODEL
+USE_MULTIPROCESSING = config.USE_MULTIPROCESSING
+OPTIMIZER = config.OPTIMIZER
+LOSS_NAME = config.LOSS_NAME
+METRIC_NAME = config.METRIC_NAME
 
 data_folder_train = './data/train/new_images/'
 mask_folder_train = './data/train/new_masks/'
@@ -42,13 +53,17 @@ tb = TensorBoard(log_dir=log_path, write_graph=True)
 lr_scheduler = LearningRateScheduler(lr_function)
 
 
-model = build_model((112,112,3))
-loss_function = DiceLoss()
-model.compile('Adam', loss=loss_function, metrics=[iou])
+model = build_model((INPUT_SHAPE,INPUT_SHAPE,3), name_model = NAME_MODEL)
+
+loss_function = get_loss(LOSS_NAME)
+metric = get_metrics(METRIC_NAME)
+
+model.compile(OPTIMIZER, loss=loss_function, metrics=[iou])
+
 model.fit(data_sequence_train,
-                        epochs=100,
-                        initial_epoch=0,
+                        epochs=EPOCHS,
+                        initial_epoch=INITIAL_EPOCH,
                         validation_data=data_sequence_val,
-                        use_multiprocessing=False,
+                        use_multiprocessing=USE_MULTIPROCESSING,
                         callbacks=[mc,tb,lr_scheduler,],
                          verbose=1 )
