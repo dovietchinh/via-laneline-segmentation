@@ -326,21 +326,21 @@ via-laneline-segmentation
 
 ## Training Steps
 
-B1: Download data in [6].
+Step 1 : Download data in [6].
 
-B2: Preprocess data. 
+Step 2 : Preprocess data. 
 
-B3: Build model.
+Step 3 : Build model.
 
-B4: Augment data.
+Step 4 : Augment data.
 
-B5: Write DataSequence, include read,process,augment images.
+Step 5 : Write DataSequence, include read,process,augment images.
 
-B6: Build metrics functions.
+Step 6 : Build metrics functions.
 
-B7: Train.
+Step 7 : Train.
 
-B8: Run Demo.
+Step 8 : Run Demo.
 
 ## Preprocessing
 
@@ -377,7 +377,7 @@ Policy of each transformation was specificed in param M.
 You can try with difference values by editing **config.py**.
 
 
-## Cấu trúc mạng
+## Model Architecture
 
 I implemented U-net, an popular network in segmenation.
 
