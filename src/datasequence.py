@@ -19,7 +19,7 @@ import sys
 path_ = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(path_+'/../')
 from configs import config
-class DataSequence(tf.keras.utils.Sequence):
+class DataSequenceTensorFlow(tf.keras.utils.Sequence):
     """DataSequence : 
 
     Args:
@@ -67,6 +67,46 @@ class DataSequence(tf.keras.utils.Sequence):
         return data,labels
     
     def on_epoch_end(self,):
-        random.shuffle(self.all_data)
+        if config.SHUFFLE:
+            random.shuffle(self.all_data)
+        pass
 
 
+import torch
+
+class DataSeuqenceTorch(torch.utils.data.Dataset):
+    def __init__(self,data_folder, mask_folder, phase = 'train'):
+        try:
+            assert phase in ['train', 'val', 'test'], "Invalid keyworks, phase must be in ['train','val','test']"
+        except Exception as msg:
+            print(msg)
+        self.data_folder = data_folder
+        self.mask_folder = mask_folder
+        self.data_names = os.listdir(data_folder)
+        self.mask_names = list(map(lambda x : x.replace('.jpg','.png'),self.data_names))
+        self.phase = phase 
+        if phase == 'train':
+            self.augmenter = RandAugment(config.N,config.M)
+        self.all_data = list(zip(self.data_names,self.mask_names))
+    def __len__(self):
+        return len(self.all_data)
+    
+    def __getitem__(self,index):
+        data = []
+        labels = []
+        img_path,mask_path = self.all_data[index]
+        img = cv2.imread(os.path.join(self.data_folder,img_path), cv2.IMREAD_COLOR )
+        mask = cv2.imread(os.path.join(self.mask_folder,mask_path), cv2.IMREAD_COLOR )
+        if (img is None) or (mask is None):
+            print('Unable to read this sample: ',img_path.replace('.jpg',''))
+            img = np.zeros(3,112,112)
+            mask = np.zeros(1,112,112)
+        else:
+            img = np.transpose(img,axes=[2,0,1])
+            mask = np.transpose(mask,axes=[2,1,0])
+            mask = mask[:1,:,:]
+        if self.phase =='train':
+            img,mask = self.augmenter(img,mask)
+        img = img.astype('float32')/255.
+        mask = mask.astype('float32')/255.       
+        return img,mask

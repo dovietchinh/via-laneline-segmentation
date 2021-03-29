@@ -10,7 +10,7 @@ repo này huấn luyện mạng phân đoạn vạch kẻ đường, được t�
 
     - [x] Tensorflow - keras.
 
-    - [ ] Pytorch.
+    - [x] Pytorch.
 
     - [ ] MXnet.
 
@@ -34,7 +34,19 @@ repo này huấn luyện mạng phân đoạn vạch kẻ đường, được t�
 
     - [ ] double U-net.
 
-- [x] Cung cấp pre-train model.
+- [ ] Cung cấp pre-train model.
+
+    - [x] pre-train Unet tensorflow.
+
+    - [ ] pre-train Double-Unet tensorflow.
+
+    - [ ] pre-train Unet Pytorch.
+
+    - [ ] pre-train Double-Unet Pytorch.
+
+    - [ ] pre-train Unet MXNet.
+
+    - [ ] pre-train Double-Unet MXNet.
 
 - [x] Xây dựng metrics đánh giá.
 
@@ -62,7 +74,7 @@ repo này huấn luyện mạng phân đoạn vạch kẻ đường, được t�
 
     Các thư viện yêu cầu trong requirements.txt 
 
-    Các bạn mở terminal ,tạo môi trường mới, activate môi trường và cài các thư viện cần thiết. 
+    Các bạn mở terminal, tạo môi trường mới, activate môi trường và cài các thư viện cần thiết. 
 
 ```
 
@@ -71,6 +83,10 @@ conda create -n lanlinesegment python==3.8
 conda activate  lanelinesegment.
 
 pip install -r requirements.txt
+
+pip install tensorlow==2.4.1   (if you are tensorflow user).
+
+pip install torch==1.8.0       (if you are pytorch user).
 
 ```
 
@@ -100,14 +116,15 @@ via-laneline-segmentation
 |
 ├── models                           # put pre-train models here
 |    ├── *.h5
-
+|    ├── *.pth
+|
 ├── video                           # put videos your want to test here
 |    ├── *.mp4
 |
 ├── .gitignore
 ├── README.md
 ├── LICENSE
-├── transform_data.py               # run this file first
+├── preprocess.py               # run this file first
 ├── demo_image.py
 ├── demo_video.py
 
@@ -133,15 +150,15 @@ B8: Chạy Demo.
 
 ## Xử lý dữ liệu
 
-Dữ liệu gốc nhóm via cung cấp có độ phân giải 640x250, mask gồm 3 classes (Background,line,Road), để phù hợp với bài toán, tôi đọc ảnh và resize về  256x256 , ảnh mask chỉ giữ lại pixel line.
+Dữ liệu gốc nhóm via cung cấp có độ phân giải 640x250, mask gồm 3 classes (Background, line, Road), để phù hợp với bài toán, tôi đọc ảnh và resize về  256x256, ảnh mask chỉ giữ lại pixel line.
 
-tất cả được xử lý trong file **tranform_data.py**
+tất cả được xử lý trong file [**preprocess.py**](https://github.com/dovietchinh/via-laneline-segmentation/blob/master/preprocess.py).
 
-các bạn có thể  tự lựa chọn resolution cho phù hợp, chỉnh sửa file **config,py**
+các bạn có thể  tự lựa chọn resolution cho phù hợp, chỉnh sửa file [**config.py**](https://github.com/dovietchinh/via-laneline-segmentation/blob/master/configs/config.py).
 
 Sau khi chạy lệnh sau trên terminal :
 
-`python3 transform_data.py` 
+`python3 preprocess.py` 
 
 sẽ thu được new_masks và new_images trong folder data.
 
@@ -160,7 +177,7 @@ Code augment dữ liệu trong file augmenter.py triển khai theo ý tưởng c
 
 Mỗi bức ảnh sẽ áp dụng theo chuỗi từ 1 -> N tranformation khác nhau với cường độ M.
 
-Để sửa 2 tham số cho augmenter : chỉnh sửa trong file **config.py**
+Để sửa 2 tham số cho augmenter : chỉnh sửa trong file [**config.py**](https://github.com/dovietchinh/via-laneline-segmentation/blob/master/configs/config.py).
 
 ## Cấu trúc mạng
 
@@ -191,11 +208,11 @@ and Fully Connected CRFs](https://arxiv.org/pdf/1606.00915v2.pdf)
 
 [5] Data: [ISIC2018_task1 Lesion Boundary Segmentaion ](https://challenge2018.isic-archive.com/)
 
-[6] Link dữ liệu gốc : [here]().
+[6] Link dữ liệu gốc : [here](https://github-releases.githubusercontent.com/349894944/2fd19c80-8a38-11eb-86f6-349137302abc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210327T075647Z&X-Amz-Expires=300&X-Amz-Signature=d97d1dddcb3862b2c4d41d15cbbdb767c933449c5871968d65716b98bc762cc7&X-Amz-SignedHeaders=host&actor_id=70321021&key_id=0&repo_id=349894944&response-content-disposition=attachment%3B%20filename%3Dvia-laneline-20210321.zip&response-content-type=application%2Foctet-stream).
 
-    Link dữ liệu đã qua xử lys: [here]().
+Link dữ liệu đã qua xử lys: [here](https://drive.google.com/file/d/12ZBQU9sp6L1nHbu1ZYcPiEgAwXPyJhyH/view?usp=sharing).
 
-[7] Pre-train model :[[link here]](https://drive.google.com/drive/folders/1cwNzf9OSG3PD_8MCeVobl04HystIbCSV?usp=sharing) 
+[7] Pre-train model :[[link here]](https://drive.google.com/drive/folders/1lRESJeFdqpbiZpZ5w7grqIYtpAo6WPUT?usp=sharing) 
 
 [8] RandAugment paper : [RandAugment: Practical automated data augmentation with a reduced search space](https://arxiv.org/abs/1909.13719)
 
@@ -211,7 +228,7 @@ Thời gian chuẩn bị gấp rút nên có nhiều sai sót, mong nhận đư�
 
 # via-laneline-segmentation
 
-This repo implement a baseline segmentation model, which detect laneline on the road.
+This repo implemented a baseline segmentation model, which detect laneline on the road.
 
 This work was integrated into [via-intelligent project]().
 
@@ -221,7 +238,7 @@ This work was integrated into [via-intelligent project]().
 
     - [x] Tensorflow - keras.
 
-    - [ ] Pytorch.
+    - [x] Pytorch.
 
     - [ ] MXnet.
 
@@ -245,7 +262,19 @@ This work was integrated into [via-intelligent project]().
 
     - [ ] double U-net.
 
-- [x] Providing pre-train model.
+- [ ] Providing pre-train model.
+
+    - [x] pre-train Unet tensorflow.
+
+    - [ ] pre-train Double-Unet tensorflow.
+
+    - [ ] pre-train Unet Pytorch.
+
+    - [ ] pre-train Double-Unet Pytorch.
+
+    - [ ] pre-train Unet MXNet.
+
+    - [ ] pre-train Double-Unet MXNet.
 
 - [x] Coding metric functions.
 
@@ -283,6 +312,10 @@ conda activate  lanelinesegment.
 
 pip install -r requirements.txt
 
+pip install tensorlow==2.4.1   (if you are tensorflow user).
+
+pip install torch==1.8.0       (if you are pytorch user).
+
 ```
 
 ## Folder Structure
@@ -311,14 +344,15 @@ via-laneline-segmentation
 |
 ├── models                           # put pre-train models here
 |    ├── *.h5
-
+|    ├── *.pth
+|
 ├── video                           # put videos your want to test here
 |    ├── *.mp4
 |
 ├── .gitignore
 ├── README.md
 ├── LICENSE
-├── transform_data.py               # run this file first
+├── preprocess.py               # run this file first
 ├── demo_image.py
 ├── demo_video.py
 
@@ -334,7 +368,7 @@ Step 3 : Build model.
 
 Step 4 : Augment data.
 
-Step 5 : Write DataSequence, include read,process,augment images.
+Step 5 : Write DataSequence, include read, process, augment images.
 
 Step 6 : Build metrics functions.
 
@@ -344,15 +378,15 @@ Step 8 : Run Demo.
 
 ## Preprocessing
 
-Our data with resolution 640x250, labeled into 3 classes (Background,line,Road), I have changes into 256x256 for saving training and inference time.
+Our data with resolution 640x250, labeled into 3 classes (Background, line, Road), I have changes into 256x256 for saving training and inference time.
 
-You can try another value in **config.py**.
+You can try another value in [**config.py**](https://github.com/dovietchinh/via-laneline-segmentation/blob/master/configs/config.py).
 
-All the preprocessing phase were implemented in **transform_data,py**.
+All the preprocessing phase were implemented in [**preprocess.py**](https://github.com/dovietchinh/via-laneline-segmentation/blob/master/preprocess.py).
 
 Run command-line in terminal to create processed data
 
-`python3 transform_data.py` 
+`python3 preprocess.py` 
 
 See result new_images and new_masks.
 
@@ -374,7 +408,7 @@ Every Single image was applied N different transformation in random order.
 
 Policy of each transformation was specificed in param M.
 
-You can try with difference values by editing **config.py**.
+You can try with difference values by editing [**config.py**](https://github.com/dovietchinh/via-laneline-segmentation/blob/master/configs/config.py).
 
 
 ## Model Architecture
@@ -408,11 +442,11 @@ and Fully Connected CRFs](https://arxiv.org/pdf/1606.00915v2.pdf)
 
 [5] Data: [ISIC2018_task1 Lesion Boundary Segmentaion ](https://challenge2018.isic-archive.com/)
 
-[6] Link original data: [here]().
+[6] Link original data: [here](https://github-releases.githubusercontent.com/349894944/2fd19c80-8a38-11eb-86f6-349137302abc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210327T075647Z&X-Amz-Expires=300&X-Amz-Signature=d97d1dddcb3862b2c4d41d15cbbdb767c933449c5871968d65716b98bc762cc7&X-Amz-SignedHeaders=host&actor_id=70321021&key_id=0&repo_id=349894944&response-content-disposition=attachment%3B%20filename%3Dvia-laneline-20210321.zip&response-content-type=application%2Foctet-stream).
 
-    Link processed data: [here]().
+Link processed data: [here](https://drive.google.com/file/d/12ZBQU9sp6L1nHbu1ZYcPiEgAwXPyJhyH/view?usp=sharing).
 
-[7] Pre-train model :[[link here]](https://drive.google.com/drive/folders/1cwNzf9OSG3PD_8MCeVobl04HystIbCSV?usp=sharing) 
+[7] Pre-train model :[[link here]](https://drive.google.com/drive/folders/1lRESJeFdqpbiZpZ5w7grqIYtpAo6WPUT?usp=sharing) 
 
 [8] RandAugment paper : [RandAugment: Practical automated data augmentation with a reduced search space](https://arxiv.org/abs/1909.13719)
 

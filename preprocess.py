@@ -13,7 +13,7 @@ import cv2
 import numpy as np
 import os
 import pathlib
-
+from configs import config
 
 def transform_data(data_folder = './data/', phase = 'train'):
 	global count
@@ -33,7 +33,7 @@ def transform_data(data_folder = './data/', phase = 'train'):
 	
 	for name in image_names:
 		img = cv2.imread(old_image_folder+name,cv2.IMREAD_COLOR)
-		img = cv2.resize(img,(256,256))
+		img = cv2.resize(img, (config.INPUT_SHAPE,config.INPUT_SHAPE))
 		test = cv2.imwrite(new_image_folder + name, img) 
 		if test ==False:
 			print( ' Error occur with image: ',name)
@@ -47,7 +47,7 @@ def transform_data(data_folder = './data/', phase = 'train'):
 		img = cv2.imread(old_mask_folder+name,cv2.IMREAD_GRAYSCALE)
 		thresh, img = cv2.threshold(img, thresh=140, maxval=255, 
 			type=cv2.THRESH_BINARY)
-		img = cv2.resize(img,(256,256))
+		img = cv2.resize(img, (config.INPUT_SHAPE,config.INPUT_SHAPE))
 		test = cv2.imwrite(new_mask_folder + name, img) 
 		if test ==False:
 			print( ' Error occur with image: ',name)

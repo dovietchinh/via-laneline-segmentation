@@ -78,8 +78,33 @@ ops = {
         'ShiftScaleRotate': ShiftScaleRotate(p =1,shift_limit=0.1, scale_limit=0.1, rotate_limit=30, interpolation=cv2.INTER_NEAREST, border_mode=cv2.BORDER_REPLICATE)
 }
 
+
+get_policy_for_each_transformation = {
+        'CenterCrop': None,
+        'Crop': None,
+        'ElasticTransform': None,
+        'GridDistortion': None,
+        'HorizontalFlip': None,
+        'RandomBrightnessContrast': None,
+        'RandomContrast': None,
+        'MotionBlur': None,
+        'MedianBlur': None,
+        'GaussianBlur': None,
+        'ChannelShuffle': None,
+        'CoarseDropout': None,
+        'ShiftScaleRotate': None,
+}
+
+
 class RandAugment():
     def __init__(self,N=3,M=10):
+        """[summary]
+
+        Args:
+            N (int, optional): [numbers of transformations will apply to image seuqentially]. Defaults to 3.
+            M (int, optional): [policy for each transformations, see ]. Defaults to 10.
+        """
+
         self.N = N
         self.M = M
     
@@ -101,6 +126,7 @@ class RandAugment():
                 img_aug = cv2.resize(img_aug,(256,256))
                 mask_aug = cv2.resize(mask_aug,(256,256))
         return img_aug,mask_aug        
+
 
 if __name__ =='__main__':
     x = cv2.imread('data/train/new_images/train_00000.jpg', cv2.IMREAD_COLOR)

@@ -11,16 +11,12 @@ date:
 import tensorflow as tf
 import numpy as np 
 import cv2 
-import argparse
-parser = argparse.ArgumentParser(description='Retinaface')
-parser.add_argument('-m', '--model', default='./models/pre_train_unet.h5',
-                    type=str, help='Trained state_dict file path to open')
-parser.add_argument('--img_path', default='./images/demo_image.jpg', type=str, help='Whether use origin image size to evaluate')
-args = parser.parse_args()
+from configs import config
 
-def main():
-    model = tf.keras.models.load_model(args.model, compile=False)
-    img = cv2.imread(args.img_path, cv2.IMREAD_COLOR)
+
+def main_tensorflow():
+    model = tf.keras.models.load_model(config.PRE_TRAIN_MODEL_PATH, compile=False)
+    img = cv2.imread(config.IMG_DEMO_PATH, cv2.IMREAD_COLOR)
     img = cv2.resize(img,(256,256))
     img_show = img.copy()
     img = np.expand_dims(img,axis=0)
@@ -31,6 +27,12 @@ def main():
     cv2.imshow('a',output)
     cv2.imshow('b',img_show)
     cv2.waitKey(0)
+def main_pytorch():
+    print('Have no pre-train pytorch model ')
+    pass
 
 if __name__ =='__main__':
-    main()
+    if config.FRAME_WORK == 'TENSORFLOW':
+        main_tensorflow()
+    if config.FRAME_WORK == 'PYTORCH':
+        main_pytorch()
