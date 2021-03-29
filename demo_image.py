@@ -24,8 +24,8 @@ def main_tensorflow():
     output = model(img).numpy()
     output = (output + 0.5).astype('uint8')*255
     output = np.concatenate([output[0]]*3,axis=-1)
-    cv2.imshow('a',output)
-    cv2.imshow('b',img_show)
+    cv2.imshow('predict result',output)
+    cv2.imshow('input image',img_show)
     cv2.waitKey(0)
 def main_pytorch():
     print('Have no pre-train pytorch model ')

@@ -109,6 +109,11 @@ class RandAugment():
         self.M = M
     
     def get_random_ops(self,):
+        """[pick randomly N transformation functions in ops dictionary]
+
+        Returns:
+            [type]: [return list of transformation functions]
+        """
         n = np.random.randint(1,self.N+1)
         ops_random = np.random.choice( list(ops.keys()), n)
         return ops_random

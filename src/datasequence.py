@@ -20,10 +20,17 @@ path_ = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(path_+'/../')
 from configs import config
 class DataSequenceTensorFlow(tf.keras.utils.Sequence):
-    """DataSequence : 
-
+    """DataSequence : ( TENSORFLOW )
+        class define will wraper folowing steps:
+            - reading images
+            - normalizing images
+            - fetching a minibatch of data and collating them into batched samples
+            - shuffle data if configs.SHUFFLE set to True
     Args:
-        tf ([type]): [description]
+        __init__  
+        __len__          return total steps per epoch
+        __getitem__      return a batched data (x,y)
+        on_epoch_end     this function will excute when reaching end of epochs
     """
 
 
@@ -75,6 +82,21 @@ class DataSequenceTensorFlow(tf.keras.utils.Sequence):
 import torch
 
 class DataSeuqenceTorch(torch.utils.data.Dataset):
+    """DataSequence : ( PYTORCH )
+        class define will wraper folowing steps:
+            - reading images
+            - normalizing images
+            - fetching indivisual data ( Not in batched)
+            - shuffle data if configs.SHUFFLE set to True
+
+        Being a argument in torch.utils.data.DataLoader
+        call DataLoader to collating data into batched samples
+    Args:
+        __init__  
+        __len__          return total samples in your data
+        __getitem__      return a sample (x,y)
+        
+    """
     def __init__(self,data_folder, mask_folder, phase = 'train'):
         try:
             assert phase in ['train', 'val', 'test'], "Invalid keyworks, phase must be in ['train','val','test']"
