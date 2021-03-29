@@ -26,13 +26,6 @@ import random
 
 #---------------------------TENSORFLOW CODE-------------------------------------
 def main_tensorflow():
-    import tensorflow as tf
-    from datasequence import DataSequenceTensorFlow
-    from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard, LearningRateScheduler
-    from metrics import iou,DiceLoss
-    from model import build_model_tensorflow
-
-
     data_sequence_train = DataSequenceTensorFlow(data_folder_train, mask_folder_train, batch_size=32, phase='train')
     data_sequence_val = DataSequenceTensorFlow(data_folder_val, mask_folder_val, batch_size=32, phase='val')
 
@@ -65,15 +58,7 @@ def main_tensorflow():
 
 #---------------------------PYTORCH CODE-------------------------------------
 def main_pytorch():
-    import torch.optim
-    from model import build_model_pytorch
-    from datasequence import DataSeuqenceTorch
-    import torch
-    from metrics import DiceLossTorch
-    torch.manual_seed(1234)
-    np.random.seed(1234)
-    random.seed(1234)
-    from tqdm import tqdm
+
     data_sequence_train = DataSeuqenceTorch(data_folder_train, mask_folder_train, phase ='train')
     data_sequence_val = DataSeuqenceTorch(data_folder_val, mask_folder_val, phase='val')
 
@@ -84,8 +69,8 @@ def main_pytorch():
     
     model = build_model_pytorch(name_model=NAME_MODEL)
     model.to(device)
-    optimizer = torch.optim.Adam(model.parameters())#, lr=0.001, momentum=0.9)
-    criterior = DiceLossTorch()
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)#, momentum=0.9)
+    criterior = BinaryDiceLoss()
 
     for epoch in range(INITIAL_EPOCH,EPOCHS):
         print("Epoch {}/{}".format(epoch,EPOCHS))
@@ -141,6 +126,17 @@ if __name__ =='__main__':
         print(msg)
 
     if FRAME_WORK == 'TENSORFLOW':
+
+        import tensorflow as tf
+        from datasequence import DataSequenceTensorFlow
+        from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard, LearningRateScheduler
+        from metrics import iou,DiceLoss
+        from model import build_model_tensorflow
+        import random
+        import numpy as np
+        tf.random.set_seed(1)
+        np.random.seed(1)
+        random.seed(1)
         if USE_GPU == True:
             with tf.device('gpu'):
                 main_tensorflow()
@@ -149,6 +145,15 @@ if __name__ =='__main__':
                 main_tensorflow()
 
     if FRAME_WORK == 'PYTORCH':
+        import torch.optim
+        from model import build_model_pytorch
+        from datasequence import DataSeuqenceTorch
+        import torch
+        from metrics import DiceLossTorch,BinaryDiceLoss
+        torch.manual_seed(1)
+        np.random.seed(1)
+        random.seed(1)
+        from tqdm import tqdm
         if USE_GPU == True:
             device = 'cuda'
         else:

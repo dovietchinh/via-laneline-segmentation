@@ -125,7 +125,7 @@ class DataSeuqenceTorch(torch.utils.data.Dataset):
             mask = np.zeros(1,112,112)
         else:
             img = np.transpose(img,axes=[2,0,1])
-            mask = np.transpose(mask,axes=[2,1,0])
+            mask = np.transpose(mask,axes=[2,0,1])
             mask = mask[:1,:,:]
         if self.phase =='train':
             img,mask = self.augmenter(img,mask)

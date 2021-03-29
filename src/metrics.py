@@ -50,6 +50,13 @@ if config.FRAME_WORK == 'PYTORCH':
     import torch.nn as nn
     import torch.nn.functional as F
     import numpy as np
+    EPS = 1e-6
+    def iou_pytorch(y_true, y_pred):
+        intersection = (y_true * y_pred).sum(axis=[1,2,3])
+        union = y_true.sum(axis=[1,2,3]) + y_pred.sum(axis=[1,2,3]) - intersection
+        x = (intersection + EPS )/ (union + EPS)
+        
+        return x
     def make_one_hot(input, num_classes):
         """Convert class index tensor to one hot encoding tensor.
         Args:
