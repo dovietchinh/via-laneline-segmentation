@@ -12,7 +12,7 @@ date:
 # Selecting frame-work
 FRAME_WORK = 'PYTORCH'#'TENSORFLOW'                 # must be in ['TENSORFLOW','PYTORCH','MXNET'],   
                                            # MXNET is not available on this repo, this feature will be update soon
-USE_GPU = False
+USE_GPU = True
 
 
 # Model Architecture
@@ -24,7 +24,7 @@ INPUT_SHAPE = 256                         # (256,256,3)
 
 EPOCHS = 100
 BATCH_SIZE = 16
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.01
 INITIAL_EPOCH = 0
 USE_MULTIPROCESSING = True
 OPTIMIZER = 'Adam'

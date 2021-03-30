@@ -69,9 +69,12 @@ def main_pytorch():
     dataloader_dic = {"train":train_data_loader,"val": val_data_loader}
     
     model = build_model_pytorch(name_model=NAME_MODEL)
-    model.to(device)
+    model = model.to(device)
+    for params in model.parameters():
+        params.requires_grad = True
     optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)#, momentum=0.9)
-    criterior = BinaryDiceLoss()
+    criterior = DiceLoss_2()
+    #criterior = torch.nn.MSELoss()
 
     for epoch in range(INITIAL_EPOCH,EPOCHS):
         print("Epoch {}/{}".format(epoch,EPOCHS))
@@ -82,8 +85,8 @@ def main_pytorch():
                 model.eval()
             epoch_loss = 0.0
             epoch_iou = 0.0
-            if(epoch == 0) and (phase == "train"):
-                continue
+           # if(epoch == 0) and (phase == "train"):
+            #    continue
             for inputs, labels in tqdm(dataloader_dic[phase]):
                 inputs = inputs.to(device)
                 labels = labels.to(device)
@@ -91,19 +94,24 @@ def main_pytorch():
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase=="train"):
                     outputs = model(inputs)
-                    loss = criterior(outputs,labels)
+                    loss = 100*criterior(outputs,labels)
                     #_,preds = torch.max(outputs,1)
-                    iou = iou_pytorch(outputs,labels)
+                    iou = iou_pytorch((outputs>0.5).int(),labels)
+
                     if phase == "train":
                         loss.backward()
+                   #     print(model.conv22.weight.grad.sum())
+                       # print(loss)
                         optimizer.step()
-                    epoch_loss += loss.item()*inputs.size(0)
+                    
+                   # print('---', model.state_dict()['conv1.bias'][0])
+                    epoch_loss += loss*inputs.size(0)
                     epoch_iou+=torch.sum(iou)
             epoch_loss = epoch_loss/len(dataloader_dic[phase].dataset)
             epoch_iou = epoch_iou.double()/len(dataloader_dic[phase].dataset)
             print("{} Loss: {:.4f} Acc: {:.4f}".format(phase,epoch_loss,epoch_iou))
-        if epoch%3 ==0 and epoch!=0:
-            torch.save(model,'./checkpoint/model_ep{:3d}'.format(epoch))
+        #if epoch%1 ==0 and epoch!=0:
+        torch.save(model,'./checkpoint/model_ep{}.pth'.format(epoch))
 if __name__ =='__main__':
 
     FRAME_WORK = config.FRAME_WORK  
@@ -152,13 +160,13 @@ if __name__ =='__main__':
         from model import build_model_pytorch
         from datasequence import DataSeuqenceTorch
         import torch
-        from metrics import DiceLossTorch,BinaryDiceLoss
+        from metrics import DiceLossTorch,BinaryDiceLoss,DiceLoss_2
         torch.manual_seed(1)
         np.random.seed(1)
         random.seed(1)
         from tqdm import tqdm
         if USE_GPU == True:
-            device = 'cuda'
+            device = torch.device("cuda") 
         else:
-            device = 'cpu'
+            device = torch.device("cpu") 
         main_pytorch()

@@ -292,7 +292,7 @@ class UNet(torch.nn.Module):
         conv7 = self.conv7(pool6)
         conv7 = self.conv7_relu(conv7)
         conv8 = self.conv8(conv7)
-        conv8 = F.relu(conv8)
+        conv8 = self.conv8_relu(conv8)
 
         pool8 = self.pool8(conv8)
         conv9 = self.conv9(pool8)

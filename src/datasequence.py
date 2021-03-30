@@ -121,14 +121,14 @@ class DataSeuqenceTorch(torch.utils.data.Dataset):
         mask = cv2.imread(os.path.join(self.mask_folder,mask_path), cv2.IMREAD_COLOR )
         if (img is None) or (mask is None):
             print('Unable to read this sample: ',img_path.replace('.jpg',''))
-            img = np.zeros(3,112,112)
-            mask = np.zeros(1,112,112)
-        else:
-            img = np.transpose(img,axes=[2,0,1])
-            mask = np.transpose(mask,axes=[2,0,1])
-            mask = mask[:1,:,:]
+            img = np.zeros(256,256,3)
+            mask = np.zeros(256,256,3)
         if self.phase =='train':
             img,mask = self.augmenter(img,mask)
+        
+        img = np.transpose(img,axes=[2,0,1])
+        mask = np.transpose(mask,axes=[2,0,1])
+        mask = mask[:1,:,:]
         img = img.astype('float32')/255.
         mask = mask.astype('float32')/255.       
         return img,mask

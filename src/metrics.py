@@ -94,22 +94,20 @@ if config.FRAME_WORK == 'PYTORCH':
             self.p = p
             self.reduction = reduction
 
-        def forward(self, y_pred, y_true):
-            assert y_pred.shape[0] == y_true.shape[0], "predict & target batch size don't match"
-            y_true = torch.flatten(y_true, start_dim=1)
-            y_pred = torch.flatten(y_pred, start_dim=1)
-            intersection = torch.sum(y_true*y_pred, start_dim=1)
-            result =  1 - ((2*intersection + EPS) / (torch.sum(y_true, start_dim=1) + torch.sum(y_pred, start_dim=1) + EPS))
-            return result.mean()
+        def forward(self, predict, target):
+            assert predict.shape[0] == target.shape[0], "predict & target batch size don't match"
+            intersection = torch.sum(target*predict,axis=[1,2,3])
+            result =  1 - ((2*intersection + EPS) / (torch.sum(target,axis=[1,2,3]) + torch.sum(target,axis=[1,2,3]) + EPS))
+            return result.sum()
 
-            if self.reduction == 'mean':
-                return loss.mean()
-            elif self.reduction == 'sum':
-                return loss.sum()
-            elif self.reduction == 'none':
-                return loss
-            else:
-                raise Exception('Unexpected reduction {}'.format(self.reduction))
+        #    if self.reduction == 'mean':
+        #        return loss.mean()
+        #    elif self.reduction == 'sum':
+        #        return loss.sum()
+        #    elif self.reduction == 'none':
+        #        return loss
+        #    else:
+        #        raise Exception('Unexpected reduction {}'.format(self.reduction))
 
 
     class DiceLossTorch(nn.Module):
@@ -145,3 +143,21 @@ if config.FRAME_WORK == 'PYTORCH':
                     total_loss += dice_loss
 
             return total_loss/target.shape[1]
+
+    class DiceLoss_2(nn.Module):
+        def __init__(self, weight=None, size_average=True):
+            super(DiceLoss_2, self).__init__()
+
+        def forward(self, inputs, targets, smooth=100):
+            
+            #comment out if your model contains a sigmoid or equivalent activation layer
+            #inputs = F.sigmoid(inputs)       
+            
+            #flatten label and prediction tensors
+            inputs = inputs.view(-1)
+            targets = targets.view(-1)
+            
+            intersection = (inputs * targets).sum()                            
+            dice = (2.*intersection + smooth)/(inputs.sum() + targets.sum() + smooth)  
+            return 1 - dice
+            #return 1 - dice
