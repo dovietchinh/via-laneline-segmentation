@@ -11,6 +11,7 @@ date:
 from posix import NGROUPS_MAX
 import os 
 from datasequence import DataSeuqenceTorch
+from metrics import iou_pytorch
 from utils import *
 import pathlib
 import warnings
@@ -80,7 +81,7 @@ def main_pytorch():
             else:
                 model.eval()
             epoch_loss = 0.0
-            epoch_corrects = 0
+            epoch_iou = 0.0
             if(epoch == 0) and (phase == "train"):
                 continue
             for inputs, labels in tqdm(dataloader_dic[phase]):
@@ -91,16 +92,18 @@ def main_pytorch():
                 with torch.set_grad_enabled(phase=="train"):
                     outputs = model(inputs)
                     loss = criterior(outputs,labels)
-                    _,preds = torch.max(outputs,1)
+                    #_,preds = torch.max(outputs,1)
+                    iou = iou_pytorch(outputs,labels)
                     if phase == "train":
                         loss.backward()
                         optimizer.step()
                     epoch_loss += loss.item()*inputs.size(0)
-                    epoch_corrects+=torch.sum(preds==labels.data)
+                    epoch_iou+=torch.sum(iou)
             epoch_loss = epoch_loss/len(dataloader_dic[phase].dataset)
-            epoch_acc = epoch_corrects.double()/len(dataloader_dic[phase].dataset)
-            print("{} Loss: {:.4f} Acc: {:.4f}".format(phase,epoch_loss,epoch_acc))
- 
+            epoch_iou = epoch_iou.double()/len(dataloader_dic[phase].dataset)
+            print("{} Loss: {:.4f} Acc: {:.4f}".format(phase,epoch_loss,epoch_iou))
+        if epoch%3 ==0 and epoch!=0:
+            torch.save(model,'./checkpoint/model_ep{:3d}'.format(epoch))
 if __name__ =='__main__':
 
     FRAME_WORK = config.FRAME_WORK  

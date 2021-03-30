@@ -94,15 +94,13 @@ if config.FRAME_WORK == 'PYTORCH':
             self.p = p
             self.reduction = reduction
 
-        def forward(self, predict, target):
-            assert predict.shape[0] == target.shape[0], "predict & target batch size don't match"
-            predict = predict.contiguous().view(predict.shape[0], -1)
-            target = target.contiguous().view(target.shape[0], -1)
-
-            num = torch.sum(torch.mul(predict, target), dim=1) + self.smooth
-            den = torch.sum(predict.pow(self.p) + target.pow(self.p), dim=1) + self.smooth
-
-            loss = 1 - num / den
+        def forward(self, y_pred, y_true):
+            assert y_pred.shape[0] == y_true.shape[0], "predict & target batch size don't match"
+            y_true = torch.flatten(y_true, start_dim=1)
+            y_pred = torch.flatten(y_pred, start_dim=1)
+            intersection = torch.sum(y_true*y_pred, start_dim=1)
+            result =  1 - ((2*intersection + EPS) / (torch.sum(y_true, start_dim=1) + torch.sum(y_pred, start_dim=1) + EPS))
+            return result.mean()
 
             if self.reduction == 'mean':
                 return loss.mean()
